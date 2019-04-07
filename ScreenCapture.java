@@ -4,7 +4,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -29,25 +28,23 @@ public class ScreenCapture {
     public void FullScreenStream(int FrameRate){
         ConnectServer();
         long start = System.currentTimeMillis();
-        Thread a = new CaputureScreen();
-        a.start();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException E){
-            System.out.println(E);
-        }
-        KeyboardClient keyboard = new KeyboardClient(port,host);
-        MouseKeyClient mouse = new MouseKeyClient(port,host);
         try{
             Thread.sleep(2000);
         }catch (InterruptedException E){
 
         }
+        Thread a = new CaputureScreen();
+        a.start();
+        //MouseKeyClient mouse = new MouseKeyClient(port,host);
+        //KeyboardClient keyboard = new KeyboardClient(port,host);
+        try{
+            Thread.sleep(1000);
+        } catch (InterruptedException E){
+
+        }
         while(true){
             try {
-
                 out.writeObject(CompressionUtils.compress(toByteArrayAutoClosable( ( (CaputureScreen)a).pic, "jpeg")));
-
             } catch (IOException E){
                 System.out.println(E);
             }

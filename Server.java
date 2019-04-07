@@ -16,7 +16,7 @@ public class Server extends JFrame {
     private ServerSocket server = null;
     private ObjectInputStream in = null;
     public  JFrame frame = null;
-    private int port = 1234;
+    private int port = 1000;
     public static void main(String[]args) {
         Server show = new Server();
         show.StartStream();
@@ -40,19 +40,24 @@ public class Server extends JFrame {
     }
 
     public void StartStream(){
-        final Rectangle screenRect = new Rectangle(1920,1080);
+//        final Rectangle screenRect = new Rectangle(2256,1504);
+        Rectangle screenRect = new Rectangle(100, 100);
         CreateJframe(screenRect);
         Image a = new BufferedImage(1,1,1);
         Icon  c = new ImageIcon(a);
         JLabel b = new JLabel(c);
         frame.getContentPane().add(b);
-       /* KeyboardServer keyServer = new KeyboardServer(port);
+        KeyboardServer keyServer = new KeyboardServer(port);
         frame.addKeyListener(keyServer.listener);
         keyServer.start();
         MouseKeyServer mouse = new MouseKeyServer(port);
         frame.addMouseListener(mouse.getClick());
-        frame.addMouseWheelListener(mouse.getScroll()); */
+        frame.addMouseWheelListener(mouse.getScroll());
+
         while(true){
+            if(screenRect.width != frame.getWidth() || screenRect.height != frame.getHeight()){
+                screenRect = new Rectangle((int) (0.95*frame.getWidth()), (int) (0.95*frame.getHeight()));
+            }
             try {
                 ((ImageIcon) c).setImage(ImageResizer.resize(createImageFromBytes(CompressionUtils.decompress((byte[])in.readObject())), screenRect.width , screenRect.height));
                 b.setIcon(c);
@@ -65,7 +70,7 @@ public class Server extends JFrame {
 
     public void CreateJframe(Rectangle screenRect) {
         frame = new JFrame();
-        frame.setSize(screenRect.width, screenRect.height);
+        frame.setSize(1000, 1000);
         frame.getContentPane().setLayout(new FlowLayout());
         frame.setVisible(true);
     }

@@ -8,6 +8,12 @@ import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 
+/**
+ * This program demonstrates how to resize an image.
+ *
+ * @author www.codejava.net
+ *
+ */
 public class ImageResizer {
 
     /**

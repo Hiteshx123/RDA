@@ -8,26 +8,30 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class MouseKeyServer {
-    MousePosition pos;
-    MouseClick click;
-    MouseScroll scroll;
+    Thread pos;
+    Thread click;
+    Thread scroll;
 
     public MouseKeyServer(int port){
-        pos = new MousePosition(port + 1);
-        click = new MouseClick(port + 2);
-        scroll = new MouseScroll(port + 3);
+        pos = new MousePosition(1001);
+        click = new MouseClick(1002);
+        scroll = new MouseScroll(1003);
         pos.start();
-        click.start();
-        scroll.start();
+        System.out.println("ITFUCKINGWPORKS");
+        //click.start();
+        System.out.println("ITFUCKINGWPORKS");
+        //scroll.start();
+        System.out.println("ITFUCKINGWPORKS");
     }
 
     public MouseWheelListener getScroll(){
-        return scroll.wheelListener;
+        MouseScroll a = (MouseScroll) scroll;
+        return a.wheelListener;
     }
 
-    public MouseListener getClick
-            (){
-        return click.listener;
+    public MouseListener getClick(){
+        MouseClick a = (MouseClick) click;
+        return a.listener;
     }
 
     public class MousePosition extends Thread {
@@ -35,9 +39,12 @@ public class MouseKeyServer {
         ObjectOutputStream out;
         Socket client;
         public MousePosition(int port){
+            System.out.println("Constructed call");
+
             try {
                 a = new ServerSocket(port);
                 client = a.accept();
+                System.out.println("Accepted Client: " + port);
                 out = new ObjectOutputStream(client.getOutputStream());
             } catch (IOException E){
                 System.out.println(E + "MouseScroll");
@@ -45,10 +52,12 @@ public class MouseKeyServer {
         }
         public void run() {
                 while(true) {
+                    Point mp = GetMousePos();
+                    System.out.println(mp.getX() + ", " + mp.getY());
                     try {
-                        out.writeObject(GetMousePos());
+                        out.writeObject(mp);
                     } catch (IOException E) {
-
+                        System.out.println(E);
                     }
                 }
         }
@@ -64,6 +73,7 @@ public class MouseKeyServer {
         Socket client;
         public MouseClick(int port){
             try {
+
                 b = new ServerSocket(port);
                 client = b.accept();
                 out = new ObjectOutputStream(client.getOutputStream());
@@ -71,36 +81,46 @@ public class MouseKeyServer {
                 System.out.println(E + "MouseClick");
             }
         }
-        MouseListener listener = new MouseListener() {
+        public MouseListener listener = new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 currentMove = e.getButton() + "Click";
+                System.out.println("Click");
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
                 currentMove = e.getButton() + "Press";
+                System.out.println("Press");
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 currentMove = e.getButton() + "Release";
+                System.out.println("Release");
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 currentMove = e.getButton() + "Enter";
+                System.out.println("Enter");
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 currentMove = e.getButton() + "Exit";
+                System.out.println("Exit");
             }
         };
         public void run() {
             while(true){
                 try {
+                    if(currentMove != null) {
+                        System.out.println(currentMove);
                         out.writeObject(currentMove);
+                    }
+                    currentMove = null;
+
                 } catch (IOException E){
 
                 }
@@ -122,9 +142,11 @@ public class MouseKeyServer {
 
         public MouseScroll(int port){
             try {
+
                 c = new ServerSocket(port);
                 client = c.accept();
                 out = new ObjectOutputStream(client.getOutputStream());
+
             } catch (IOException E){
                 System.out.println(E + "MouseScroll");
             }
@@ -133,7 +155,10 @@ public class MouseKeyServer {
         public void run(){
             while(true){
                 try {
-                    out.writeObject(scrollUnits);
+                   // if(scrollUnits != 0) {
+                        out.writeObject(scrollUnits);
+                  //  }
+                  //  scrollUnits = 0;
                 } catch (IOException E){
 
                 }

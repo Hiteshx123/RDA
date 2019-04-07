@@ -21,7 +21,6 @@ public class KeyboardClient extends Thread {
 
     @Override
     public void run() {
-        keybard.delay(5000);
         while (true){
             try {
                 String i = (String)in.readObject();
